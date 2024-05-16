@@ -6,10 +6,10 @@
 #include <QMap>
 #include "cardpanel.h"
 #include "gamecontrol.h"
-#include "animationwindow.h"
+//#include "animationwindow.h"
 #include "player.h"
-#include "countdown.h"
-#include "bgmcontrol.h"
+//#include "countdown.h"
+//#include "bgmcontrol.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class GamePanel; }

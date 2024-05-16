@@ -2,7 +2,7 @@
 #define CARDPANEL_H
 
 #include <QWidget>
-#include "card.h"
+// #include "card.h"
 #include "player.h"
 
 class CardPanel : public QWidget

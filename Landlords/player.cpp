@@ -99,6 +99,7 @@ Player *Player::getNextPlayer()
     return m_next;
 }
 
+// 叫地主/抢地主
 void Player::grabLoadBet(int point)
 {
 

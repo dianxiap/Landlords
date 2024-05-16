@@ -16,42 +16,8 @@ GamePanel::GamePanel(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // 1. 背景图
-    int num = QRandomGenerator::global()->bounded(10);
-    QString path = QString(":/images/background-%1.png").arg(num+1);
-    m_bkImage.load(path);
-
-    // 2. 窗口的标题的大小
-    this->setWindowTitle("欢乐斗地主");
-    this->setFixedSize(1000, 650);
-
-    // 3. 实例化游戏控制类对象
-    gameControlInit();
-
-    // 4. 玩家得分(更新)
-    updatePlayerScore();
-
-    // 5. 切割游戏图片
-    initCardMap();
-
-    // 6. 初始化游戏中的按钮组
-    initButtonsGroup();
-
-    // 7. 初始化玩家在窗口中的上下文环境
-    initPlayerContext();
-
-    // 8. 扑克牌场景初始化
-    initGameScene();
-
-    // 9. 倒计时窗口初始化
-    initCountDown();
-
-    // 定时器实例化
-    m_timer = new QTimer(this);
-    connect(m_timer, &QTimer::timeout, this, &GamePanel::onDispatchCard);
-
-    m_animation = new AnimationWindow(this);
-    m_bgm = new BGMControl(this);
+    ui->btnGroup->initButtons();
+    ui->btnGroup->selectPanel(ButtonGroup::Start);
 }
 
 GamePanel::~GamePanel()

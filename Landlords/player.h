@@ -45,7 +45,7 @@ public:
 
     // 提供当前玩家的上家/下家对象
     void setPrevPlayer(Player* player);
-    void setNextPlayer(Player*player);
+    void setNextPlayer(Player* player);
     Player* getPrevPlayer();
     Player* getNextPlayer();
 
