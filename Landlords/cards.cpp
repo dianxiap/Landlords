@@ -1,6 +1,6 @@
-#include "cards.h"
 #include <QRandomGenerator>
 #include <QDebug>
+#include "cards.h"
 
 Cards::Cards()
 {

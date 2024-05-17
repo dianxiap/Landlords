@@ -1,6 +1,5 @@
-#include "gamepanel.h"
-
 #include <QApplication>
+#include "gamepanel.h"
 
 int main(int argc, char *argv[])
 {

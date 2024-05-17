@@ -1,8 +1,8 @@
 #ifndef CARDS_H
 #define CARDS_H
-#include "card.h"
 
 #include <QSet>
+#include "card.h"
 
 class Cards
 {

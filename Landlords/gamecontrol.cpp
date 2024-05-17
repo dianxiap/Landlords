@@ -1,6 +1,5 @@
-#include "gamecontrol.h"
-
 #include <QRandomGenerator>
+#include "gamecontrol.h"
 
 GameControl::GameControl(QObject *parent)
     : QObject{parent}
