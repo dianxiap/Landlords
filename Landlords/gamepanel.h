@@ -47,6 +47,8 @@ public:
 
     // 定时器的处理动作
     void onDispatchCard();
+    // 处理玩家状态的变化
+    void onPlayerStatusChanged(Player* player,GameControl::PlayerStatus status);
 
 protected:
     void paintEvent(QPaintEvent* ev);

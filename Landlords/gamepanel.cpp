@@ -56,6 +56,9 @@ void GamePanel::gameControlInit()
     UserPlayer* user=m_gamectl->getUserPlayer();
     // 存储的顺序：左侧机器人 右侧机器人 中间玩家
     m_playerList<<leftRobot<<rightRobot<<user;
+
+    // 在主窗口中处理游戏控制类发射的信号
+    connect(m_gamectl,&GameControl::playerStatusChanged,this,&GamePanel::onPlayerStatusChanged);
 }
 
 void GamePanel::updatePlayerScore()
@@ -126,7 +129,10 @@ void GamePanel::initButtonsGroup()
     });
     connect(ui->btnGroup,&ButtonGroup::playHand,this,[=](){});
     connect(ui->btnGroup,&ButtonGroup::pass,this,[=](){});
-    connect(ui->btnGroup,&ButtonGroup::betPoint,this,[=](){});
+    connect(ui->btnGroup,&ButtonGroup::betPoint,this,[=](int bet){
+        m_gamectl->getUserPlayer()->grabLoadBet(bet);
+
+    });
 }
 
 void GamePanel::initPlayerContext()
@@ -220,7 +226,23 @@ void GamePanel::gameStatusPrecess(GameControl::GameStatus status)
         startDispatchCard();
         break;
     case GameControl::CallingLord:
-        break;
+        {
+            // 在case中定义变量需要放到大括号里
+            // 取出底牌数据
+            CardList last3Card= m_gamectl->getSurplusCards().toCardList();
+            // 给扑克牌窗口设置图片
+            for(int i=0;i<last3Card.size();i++)
+            {
+                // 取出最后的三张底牌
+                QPixmap front=m_cardMap[last3Card.at(i)]->getImage();
+                m_last3Card[i]->setImage(front,m_cardBackImg);
+                // 最后的三张牌抢完地主在显示，因此先隐藏起来
+                m_last3Card[i]->hide();
+            }
+            // 开始叫地主
+            m_gamectl->startLordCard();
+            break;
+        }
     case GameControl::PlayingHand:
         break;
     default:
@@ -318,7 +340,7 @@ void GamePanel::updatePlayerCards(Player *player)
     {
         CardPanel* panel=m_cardMap[list.at(i)];
         panel->show();
-        panel->raise();
+        panel->raise(); // 让当前窗口显示在子窗口的最上面
         panel->setFrontSide(m_contextMap[player].isFrontSide);
 
         // 水平 或 垂直展示
@@ -367,6 +389,7 @@ void GamePanel::onDispatchCard()
             m_timer->stop();
             // 切换游戏状态 发牌 -> 叫地主
             gameStatusPrecess(GameControl::CallingLord);
+            return ;
         }
 
     }
@@ -374,6 +397,25 @@ void GamePanel::onDispatchCard()
     cardMoveStep(curPlayer,curMovePos);
     curMovePos+=15;
 
+}
+
+void GamePanel::onPlayerStatusChanged(Player *player, GameControl::PlayerStatus status)
+{
+    switch(status)
+    {
+    case GameControl::ThinkingForCallLord:
+        // 切换按钮组的按钮（只有用户玩家才显示按钮组）
+        if(player==m_gamectl->getUserPlayer())
+        {
+            ui->btnGroup->selectPanel(ButtonGroup::CallCard);
+        }
+        break;
+    case GameControl::ThinkingForPlayHand:
+        break;
+    case GameControl::Winning:
+    default:
+        break;
+    }
 }
 
 void GamePanel::paintEvent(QPaintEvent *ev)

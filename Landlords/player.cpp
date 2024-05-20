@@ -103,10 +103,10 @@ Player *Player::getNextPlayer()
     return m_next;
 }
 
-// 叫地主/抢地主
+// 抢地主下注
 void Player::grabLoadBet(int point)
 {
-
+    notifyGrabLordBet(this,point);
 }
 
 void Player::storeDispatchCard(Card &card)

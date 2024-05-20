@@ -6,6 +6,27 @@
 #include "robot.h"
 // #include "card.h"
 
+// 记录玩家下注的相关信息
+struct BetRecord
+{
+    BetRecord()
+    {
+        reset();
+    }
+    void reset()
+    {
+        player=nullptr;
+        bet=0;
+        times=0;
+    }
+    // 下注的玩家对象
+    Player* player;
+    // 玩家下注的分数
+    int bet;
+    // 第几次叫地主
+    int times;
+};
+
 class GameControl : public QObject
 {
     Q_OBJECT
@@ -61,11 +82,19 @@ public:
     void becomeLord(Player* player);
     // 清空所有玩家的得分
     void clearPlayerScore();
+
     // 处理叫地主
+    void onGrabBet(Player*player, int bet);
 
     // 处理出牌
 
 signals:
+    // 通知主窗口玩家状态发生变化
+    void playerStatusChanged(Player* player,PlayerStatus status);
+    // 通知主界面玩家抢地主了
+    void notifyGrabLordBet(Player* player,int bet);
+    // 游戏状态变化
+    void gameStatusChanged(GameStatus status);
 
 private:
     Robot* m_robotLeft;   // 机器人玩家
@@ -75,6 +104,7 @@ private:
     Player* m_pendPlayer;  // 出牌的玩家
     Cards m_pendCards;     // 出牌的玩家打出的牌
     Cards m_allCards;
+    BetRecord m_betRecord;
 };
 
 #endif // GAMECONTROL_H

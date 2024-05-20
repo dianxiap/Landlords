@@ -1,4 +1,5 @@
 #include <QRandomGenerator>
+#include <QTimer>
 #include "gamecontrol.h"
 
 GameControl::GameControl(QObject *parent)
@@ -40,7 +41,10 @@ void GameControl::playerInit()
     // 指定当前玩家
     m_currPlayer=m_user;
 
-
+    // 处理玩家发出的信号
+    connect(m_user,&UserPlayer::notifyGrabLordBet,this,&GameControl::onGrabBet);
+    connect(m_robotLeft,&UserPlayer::notifyGrabLordBet,this,&GameControl::onGrabBet);
+    connect(m_robotRight,&UserPlayer::notifyGrabLordBet,this,&GameControl::onGrabBet);
 }
 
 Robot *GameControl::getLeftRobot()
@@ -119,6 +123,7 @@ void GameControl::resetCardData()
 void GameControl::startLordCard()
 {
     m_currPlayer->prepareCallLord();
+    playerStatusChanged(m_currPlayer,ThinkingForCallLord);
 }
 
 void GameControl::becomeLord(Player *player)
@@ -131,9 +136,15 @@ void GameControl::becomeLord(Player *player)
     m_currPlayer=player;
     player->storeDispatchCard(m_allCards);
 
-    // 准备出牌
-    m_currPlayer->preparePlayHand();
-
+    QTimer::singleShot(1000,this,[=]()
+    {
+        // 游戏状态变化
+        gameStatusChanged(PlayeringHand);
+        // 玩家状态变化
+        playerStatusChanged(player,ThinkingForPlayHand);
+        // 准备出牌
+        m_currPlayer->preparePlayHand();
+    });
 }
 
 void GameControl::clearPlayerScore()
@@ -141,4 +152,48 @@ void GameControl::clearPlayerScore()
     m_robotLeft->setScore(0);
     m_robotRight->setScore(0);
     m_user->setScore(0);
+}
+
+void GameControl::onGrabBet(Player *player, int bet)
+{
+    // 1.通知主界面玩家叫地主了（更新信息提示）
+    notifyGrabLordBet(player,bet);
+    // 2.判断玩家下注是不是3分，如果是抢地主结束
+    if(bet==3)
+    {
+        // 玩家成为地主
+        becomeLord(player);
+        // 清空数据
+        m_betRecord.reset();
+        return ;
+    }
+    // 3.下注不够3分，对玩家的分数进行比较，分数高的是地主
+    if(m_betRecord.bet<bet)
+    {
+        m_betRecord.bet=bet;
+        m_betRecord.player=player;
+    }
+    m_betRecord.times++;
+    // 如果每个玩家都抢过一次地主，抢地主结束
+    if(m_betRecord.times==3)
+    {
+        if(m_betRecord.bet=0)
+        {
+            // 没人抢地主，发射信号告诉主界面重新发牌
+            gameStatusChanged(DispatchCard);
+        }
+        else
+        {
+            // 让分数高的成为地主
+            becomeLord(m_betRecord.player);
+        }
+        m_betRecord.reset();
+        return ;
+    }
+    // 4.切换玩家，通知下一个玩家继续抢地主
+    m_currPlayer=player->getNextPlayer();
+    // 发送信号给主界面，告知当前状态仍为抢地主
+    playerStatusChanged(m_currPlayer,ThinkingForCallLord);
+    // 告诉当前玩家继续抢地主
+    m_currPlayer->prepareCallLord();
 }
