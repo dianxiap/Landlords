@@ -139,7 +139,7 @@ void GameControl::becomeLord(Player *player)
     QTimer::singleShot(1000,this,[=]()
     {
         // 游戏状态变化
-        gameStatusChanged(PlayeringHand);
+        gameStatusChanged(PlayingHand);
         // 玩家状态变化
         playerStatusChanged(player,ThinkingForPlayHand);
         // 准备出牌
@@ -154,10 +154,30 @@ void GameControl::clearPlayerScore()
     m_user->setScore(0);
 }
 
+int GameControl::getPlayerMaxBet()
+{
+    return m_betRecord.bet;
+}
+
 void GameControl::onGrabBet(Player *player, int bet)
 {
     // 1.通知主界面玩家叫地主了（更新信息提示）
-    notifyGrabLordBet(player,bet);
+    // bet==0：玩家放弃叫地主，m_betRecord.bet>=bet：无效分数
+    if(bet==0||m_betRecord.bet>=bet)
+    {
+        notifyGrabLordBet(player,0,false);
+    }
+    else if(bet>0&&m_betRecord.bet==9)
+    {
+        // 第一个qi抢地主的玩家
+        notifyGrabLordBet(player,bet,true);
+    }
+    else
+    {
+        // 第2，3个抢地主的玩家
+        notifyGrabLordBet(player,bet,false);
+    }
+
     // 2.判断玩家下注是不是3分，如果是抢地主结束
     if(bet==3)
     {

@@ -20,8 +20,10 @@ SOURCES += \
     gamepanel.cpp \
     mybutton.cpp \
     player.cpp \
+    playhand.cpp \
     robot.cpp \
     scorepanel.cpp \
+    strategy.cpp \
     userplayer.cpp
 
 HEADERS += \
@@ -33,8 +35,10 @@ HEADERS += \
     gamepanel.h \
     mybutton.h \
     player.h \
+    playhand.h \
     robot.h \
     scorepanel.h \
+    strategy.h \
     userplayer.h
 
 FORMS += \

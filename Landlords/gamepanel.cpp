@@ -59,6 +59,8 @@ void GamePanel::gameControlInit()
 
     // 在主窗口中处理游戏控制类发射的信号
     connect(m_gamectl,&GameControl::playerStatusChanged,this,&GamePanel::onPlayerStatusChanged);
+    connect(m_gamectl,&GameControl::notifyGrabLordBet,this,&GamePanel::onGrabLordBet);
+    connect(m_gamectl,&GameControl::gameStatusChanged,this,&GamePanel::gameStatusPrecess);
 }
 
 void GamePanel::updatePlayerScore()
@@ -271,7 +273,7 @@ void GamePanel::startDispatchCard()
         m_contextMap[m_playerList.at(i)].lastCards.clear();
         m_contextMap[m_playerList.at(i)].info->hide();
         m_contextMap[m_playerList.at(i)].roleImg->hide();
-        m_contextMap[m_playerList.at(i)].isFrontSide = i==index? true;false;
+        m_contextMap[m_playerList.at(i)].isFrontSide = i==index? true:false;
     }
     // 重置所有玩家的卡牌数据
     m_gamectl->resetCardData();
@@ -407,7 +409,7 @@ void GamePanel::onPlayerStatusChanged(Player *player, GameControl::PlayerStatus 
         // 切换按钮组的按钮（只有用户玩家才显示按钮组）
         if(player==m_gamectl->getUserPlayer())
         {
-            ui->btnGroup->selectPanel(ButtonGroup::CallCard);
+            ui->btnGroup->selectPanel(ButtonGroup::CallCard,m_gamectl->getPlayerMaxBet());
         }
         break;
     case GameControl::ThinkingForPlayHand:
@@ -416,6 +418,34 @@ void GamePanel::onPlayerStatusChanged(Player *player, GameControl::PlayerStatus 
     default:
         break;
     }
+}
+
+void GamePanel::onGrabLordBet(Player *player, int bet, bool flag)
+{
+    // 更新抢地主的信息提示
+    PlayerContext context=m_contextMap[player];
+    if(bet==0)
+    {
+        context.info->setPixmap(QPixmap(":/images/buqinag.png"));
+    }
+    else
+    {
+
+        if(flag)
+        {
+            // 第一次抢地主
+            context.info->setPixmap(QPixmap(":/images/jiaodizhu.png"));
+        }
+        else
+        {
+            // 第2，3次抢地主
+            context.info->setPixmap(QPixmap(":/images/qiangdizhu.png"));
+        }
+    }
+    context.info->show();
+
+    // 显示叫地主的分数
+    // 播放分数的背景音乐
 }
 
 void GamePanel::paintEvent(QPaintEvent *ev)

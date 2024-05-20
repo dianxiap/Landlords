@@ -61,7 +61,33 @@ void ButtonGroup::initButtons()
             });
 }
 
-void ButtonGroup::selectPanel(Panel type)
+void ButtonGroup::selectPanel(Panel type,int bet)
 {
     ui->stackedWidget->setCurrentIndex(type);
+    if(type!=CallCard)
+    {
+        return ;
+    }
+    if(bet==0)
+    {
+        // 机器人不抢地主，那么用户玩家抢几分都行
+        ui->oneScore->setVisible(true);
+        ui->twoScore->setVisible(true);
+        ui->threeScore->setVisible(true);
+    }
+    else if(bet==1)
+    {
+        // 机器人抢1分，用户玩家只能抢2，3分
+        ui->oneScore->setVisible(false);
+        ui->twoScore->setVisible(true);
+        ui->threeScore->setVisible(true);
+    }
+    else if(bet==2)
+    {
+        // 机器人抢2分，用户玩家只能抢3分
+        ui->oneScore->setVisible(false);
+        ui->twoScore->setVisible(false);
+        ui->threeScore->setVisible(true);
+    }
+
 }

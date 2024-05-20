@@ -20,7 +20,7 @@ public:
     void initButtons();
 
     // 处理page的切换
-    void selectPanel(Panel type);
+    void selectPanel(Panel type,int bet=0);
 
 signals:
     // 开始游戏
