@@ -26,6 +26,9 @@ public:
 
 private:
     QVector<Cards> getCards(Card::CardPoint point,int number);
+    QVector<Cards> getTripleSingleOrPair(Card::CardPoint begin,PlayHand::HandType type);
+    QVector<Cards> getPlane(Card::CardPoint begin);
+    QVector<Cards> getPlane2SingleOr2Pair(Card::CardPoint begin,PlanHand::HandType type);
 
 private:
     Player* m_player;

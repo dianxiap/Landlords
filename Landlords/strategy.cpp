@@ -102,15 +102,15 @@ QVector<Cards> Strategy::findCardType(PlayHand hand, bool beat)
     case PlayHand::Hand_Triple:
         return getCards(beginPoint,3);
     case PlayHand::Hand_Triple_Single:
-        break;
+        return getTripleSingleOrPair(beginPoint,PlayHand::Hand_Single);
     case PlayHand::Hand_Triple_Pair:
-        break;
+        return getTripleSingleOrPair(beginPoint,PlayHand::Hand_Pair);
     case PlayHand::Hand_Plane:
-        break;
+        return getPlane(beginPoint);
     case PlayHand::Hand_Plane_Two_Single:
-        break;
+        return getPlane2SingleOr2Pair(beginPoint,PlayHand::Hand_Single);
     case PlayHand::Hand_Plane_Two_Pair:
-        break;
+        return getPlane2SingleOr2Pair(beginPoint,PlayHand::Hand_pair);
     case PlayHand::Hand_Seq_Pair:
         break;
     case PlayHand::Hand_Seq_Single:
@@ -134,4 +134,80 @@ QVector<Cards> Strategy::getCards(Card::CardPoint point, int number)
         }
     }
     return findCardsArray;
+}
+
+QVector<Cards> Strategy::getTripleSingleOrPair(Card::CardPoint begin, PlayHand::HandType type)
+{
+    // 找到点数相同的三张牌
+    QVector<Cards> findCardArray=getCards(begin,3);
+    if(!findCardArray.isEmpty())
+    {
+        // 将找到的牌从用户手中删除
+        Cards remainCards=m_cards;
+        remainCards.remove(findCardArray);
+        // 搜索牌型
+        Strategy st(m_player,remainCards);
+        QVector<Cards> cardsArray=st.findCardType(PlayHand(type,Card::Card_Begin,0),false);
+        if(!cardsArray.isEmpty())
+        {
+            // 将找到的牌和三张点数相同的牌进行组合
+            for(int i=0;i<findCardArray.size();++i)
+            {
+                findCardArray[i].add(cardsArray.at(i));
+            }
+        }
+        else
+        {
+            findCardArray.clear();
+        }
+    }
+
+    return findCardArray;
+}
+
+QVector<Cards> Strategy::getPlane(Card::CardPoint begin)
+{
+    QVector<Cards> findCardArray;
+    for(Card::CardPoint point=begin;point<=Card::Card_K;point=(Card::CardPoint)(point+1))
+    {
+        // 根据点数和数量搜索
+        Cards prevCards=findSamePointCards(point,3);
+        Cards nextCards=findSamePointCards((Card::CardPoint)(point+1),3);
+        if(!prevCards.isEmpty()&&!nextCards.isEmpty())
+        {
+            Cards tmp;
+            tmp<<prevCards<<nextCards;
+            findCardArray<<tmp;
+        }
+    }
+    return findCardArray;
+}
+
+QVector<Cards> Strategy::getPlane2SingleOr2Pair(Card::CardPoint begin, PlanHand::HandType type)
+{
+    // 找飞机
+    QVector<Cards> findCardArray=getPlane(begin);
+    if(!findCardArray.isEmpty())
+    {
+        // 将找到的牌从用户手中删除
+        Cards remainCards=m_cards;
+        remainCards.remove(findCardArray);
+        // 搜索牌型
+        Strategy st(m_player,remainCards);
+        QVector<Cards> cardsArray=st.findCardType(PlayHand(type,Card::Card_Begin,0),false);
+        if(cardsArray.size()>=2)
+        {
+            // 找到了，将其添加到飞机组合中
+            for(int i=0;i<findCardArray.size();++i)
+            {
+                Cards tmp;
+                tmp<<cardsArray[0]<<cardsArray[1];
+                findCardArray[i].add(tmp);
+            }
+        }
+        else
+        {
+            findCardArray.clear();
+        }
+    }
 }
