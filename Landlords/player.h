@@ -67,8 +67,8 @@ public:
 
     // 设置出牌的玩家以及打出的扑克牌
     void setPendingInfo(Player* player,Cards& cards);
-    Player* gerPendPlayer();
-    Cards gerPendCards();
+    Player* getPendPlayer();
+    Cards getPendCards();
 
     // 虚函数
     virtual void prepareCallLord();

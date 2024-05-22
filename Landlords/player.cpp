@@ -140,12 +140,12 @@ void Player::setPendingInfo(Player *player, Cards &cards)
     m_pendCards=cards;
 }
 
-Player *Player::gerPendPlayer()
+Player *Player::getPendPlayer()
 {
     return m_pendPlayer;
 }
 
-Cards Player::gerPendCards()
+Cards Player::getPendCards()
 {
     return m_pendCards;
 }

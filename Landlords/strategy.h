@@ -11,9 +11,13 @@ public:
     Strategy(Player* player,const Cards& cards);
 
     // 1.制定出牌策略
+    Cards makeStrategy();
     // 2.第一个出牌 firstplayer
+    Cards firstPlay();
     // 3.得到比指定牌型大的牌
+    Cards getGreaterCards(PlayHand type);
     // 4.能大过指定的牌时，判断是出牌还是放行，返回true->出牌，返回false->放行
+    bool whetherToBeat(Cards &cs);
 
     // 5.找出指定数量（count)的形同点数的牌（point)，找出count张点数为point的牌
     Cards findSamePointCards(Card::CardPoint point,int count);
@@ -25,11 +29,26 @@ public:
     QVector<Cards> findCardType(PlayHand hand,bool beat);
 
 private:
+    using function=Cards (Strategy::*)(Card::CardPoint point);
+    struct CardInfo
+    {
+        Card::CardPoint begin;
+        Card::CardPoint end;
+        int extra;  // 顺子或者连对的数量
+        bool beat;  // 是否大于指定的牌
+        int number; // 指定点数的牌的数量
+        int base;   // 最基础的连对或者顺子的数量
+        function getSeq;
+    };
     QVector<Cards> getCards(Card::CardPoint point,int number);
     QVector<Cards> getTripleSingleOrPair(Card::CardPoint begin,PlayHand::HandType type);
     QVector<Cards> getPlane(Card::CardPoint begin);
-    QVector<Cards> getPlane2SingleOr2Pair(Card::CardPoint begin,PlanHand::HandType type);
+    QVector<Cards> getPlane2SingleOr2Pair(Card::CardPoint begin,PlayHand::HandType type);
+    QVector<Cards> getSeqPairOrSeqSingle(CardInfo &info);
+    QVector<Cards> getBomb(Card::CardPoint begin);
 
+    Cards getBaseSeqPair(Card::CardPoint point);
+    Cards getBaseSeqSingle(Card::CardPoint point);
 private:
     Player* m_player;
     Cards m_cards;
