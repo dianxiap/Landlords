@@ -73,6 +73,7 @@ public:
     // 虚函数
     virtual void prepareCallLord();
     virtual void preparePlayHand();
+    virtual void thinkCallLord();
 
 signals:
     // 通知已经掉地主下注
