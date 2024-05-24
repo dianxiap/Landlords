@@ -48,6 +48,8 @@ public:
     void disposCard(Player* player,Cards& cards);
     // 更新扑克牌在窗口中的显示
     void updatePlayerCards(Player* player);
+    // 加载玩家头像的函数
+    QPixmap loadRoleImage(Player::Sex sex,Player::Direction direct,Player::Role role);
 
     // 定时器的处理动作
     void onDispatchCard();
@@ -55,13 +57,19 @@ public:
     void onPlayerStatusChanged(Player* player,GameControl::PlayerStatus status);
     // 处理玩家抢地主
     void onGrabLordBet(Player* player,int bet,bool flag);
+    // 处理玩家的出牌
+    void onDisposePlayHand(Player* player,Cards& cards);
+    // 处理玩家选牌
+    void onCardSelected(Qt::MouseButton button);
 
     // 显示特效动画
     void showAnimation(AnimationType type,int bet=0);
+    // 隐藏玩家打出的牌
+    void hidePlayerDropCards(Player* player);
 
 protected:
     void paintEvent(QPaintEvent* ev);
-
+    void mouseMoveEvent(QMouseEvent* ev);
 
 
 private:
@@ -86,20 +94,24 @@ private:
     };
 
     Ui::GamePanel *ui;
-    QPixmap m_bkimage;              // 主界面背景图片
-    GameControl *m_gamectl;         // 游戏控制列
-    QVector<Player*> m_playerList;  // 玩家的实例对象
-    QMap<Card,CardPanel*> m_cardMap;  // 扑克牌相关数据（数据体，单张扑克牌窗口）
-    QSize m_cardSize;               // 每张扑克牌的宽度高度
-    QPixmap m_cardBackImg;          // 每张扑克牌的背景图
+    QPixmap m_bkimage;                  // 主界面背景图片
+    GameControl *m_gamectl;             // 游戏控制列
+    QVector<Player*> m_playerList;      // 玩家的实例对象
+    QMap<Card,CardPanel*> m_cardMap;    // 扑克牌相关数据（数据体，单张扑克牌窗口）
+    QSize m_cardSize;                   // 每张扑克牌的宽度高度
+    QPixmap m_cardBackImg;              // 每张扑克牌的背景图
     QMap<Player*,PlayerContext> m_contextMap; // 玩家实例与玩家上下文关系的映射
-    CardPanel* m_baseCard;          // 发牌区的扑克牌
-    CardPanel* m_moveCard;          // 发牌过程中移动的扑克牌
-    QVector<CardPanel*> m_last3Card;  // 最后的三张底牌
-    QPoint m_baseCardPos;       // 发牌的位置
+    CardPanel* m_baseCard;              // 发牌区的扑克牌
+    CardPanel* m_moveCard;              // 发牌过程中移动的扑克牌
+    QVector<CardPanel*> m_last3Card;    // 最后的三张底牌
+    QPoint m_baseCardPos;               // 发牌的位置
     GameControl::GameStatus m_gameStatus; // 游戏状态
-    QTimer* m_timer;                // 定时器
-    AnimationWindow* m_animation;   // 窗口动画类
+    QTimer* m_timer;                    // 定时器
+    AnimationWindow* m_animation;       // 窗口动画类
+    CardPanel* m_curSelCard;            // 保存当前被选中的牌的窗口对象
+    QSet<CardPanel*> m_selectCards;     // 保存当前被选中的牌的窗口对象（多张）
+    QRect m_cardsRect;                  // 非机器人玩家剩余的扑克牌显示的区域
+    QHash<CardPanel*,QRect> m_userCards;// 非机器人手中的牌 与 每张牌在窗口中的位置的映射
 };
 #endif // GAMEPANEL_H
 

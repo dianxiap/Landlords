@@ -1,6 +1,7 @@
 #include "robot.h"
 #include "strategy.h"
 #include "robotgraplord.h"
+#include "robotplayhand.h"
 
 Robot::Robot(QObject *parent)
     : Player{parent}
@@ -16,7 +17,8 @@ void Robot::prepareCallLord()
 
 void Robot::preparePlayHand()
 {
-
+    RobotPlayHand* subThread=new RobotPlayHand(this);
+    subThread->start();
 }
 
 void Robot::thinkCallLord()
@@ -67,4 +69,12 @@ void Robot::thinkCallLord()
         grabLoadBet(1);
     }
     else grabLoadBet(0);
+}
+
+void Robot::thinkPlayHand()
+{
+    Strategy st(this,m_cards);
+    Cards cs=st.makeStrategy();
+    playHand(cs);
+
 }

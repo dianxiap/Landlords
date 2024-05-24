@@ -17,6 +17,7 @@ public:
 
     // 考虑叫地主的函数
     void thinkCallLord() override;
+    void thinkPlayHand() override;
 };
 
 #endif // ROBOT_H

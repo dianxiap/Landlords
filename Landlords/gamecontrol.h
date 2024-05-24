@@ -79,7 +79,7 @@ public:
     // 准备叫地主
     void startLordCard();
     // 成为地主
-    void becomeLord(Player* player);
+    void becomeLord(Player* player,int bet);
     // 清空所有玩家的得分
     void clearPlayerScore();
     // 得到玩家下注的最高分数
@@ -89,6 +89,7 @@ public:
     void onGrabBet(Player*player, int bet);
 
     // 处理出牌
+    void onPlayHand(Player* player,Cards& cards);
 
 signals:
     // 通知主窗口玩家状态发生变化
@@ -97,6 +98,10 @@ signals:
     void notifyGrabLordBet(Player* player,int bet,bool flag);
     // 游戏状态变化
     void gameStatusChanged(GameStatus status);
+    // 通知主界面玩家抢地主了
+    void notifyPlayHand(Player* player,Cards& cards);
+    // 给其他玩家传递出牌数据
+    void pendingInof(Player* player,Cards& cards);
 
 private:
     Robot* m_robotLeft;   // 机器人玩家
@@ -107,6 +112,7 @@ private:
     Cards m_pendCards;     // 出牌的玩家打出的牌
     Cards m_allCards;
     BetRecord m_betRecord;
+    int m_currBet;
 };
 
 #endif // GAMECONTROL_H
