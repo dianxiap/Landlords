@@ -1,6 +1,8 @@
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPropertyAnimation>
 #include <QRandomGenerator>
+#include "endingpanel.h"
 #include "gamepanel.h"
 #include "playhand.h"
 #include "ui_gamepanel.h"
@@ -139,8 +141,8 @@ void GamePanel::initButtonsGroup()
         // 切换游戏状态 -> 发牌
         gameStatusPrecess(GameControl::DispatchCard);
     });
-    connect(ui->btnGroup,&ButtonGroup::playHand,this,[=](){});
-    connect(ui->btnGroup,&ButtonGroup::pass,this,[=](){});
+    connect(ui->btnGroup,&ButtonGroup::playHand,this,&GamePanel::onUserPlayHand);
+    connect(ui->btnGroup,&ButtonGroup::pass,this,&GamePanel::onUserPass);
     connect(ui->btnGroup,&ButtonGroup::betPoint,this,[=](int bet){
         m_gamectl->getUserPlayer()->grabLoadBet(bet);
         ui->btnGroup->selectPanel(ButtonGroup::Empty);
@@ -568,6 +570,7 @@ void GamePanel::onPlayerStatusChanged(Player *player, GameControl::PlayerStatus 
         // 更新玩家得分
         updatePlayerScore();
         m_gamectl->setCurrentPlayer(player);
+        showEndingScorePanel();
         break;
     default:
         break;
@@ -684,8 +687,82 @@ void GamePanel::onCardSelected(Qt::MouseButton button)
     else if(Qt::RightButton)
     {
         // 调用出牌按钮的槽函数
-
+        onUserPlayHand();
     }
+}
+
+void GamePanel::onUserPlayHand()
+{
+    // 判断游戏状态
+    if(m_gameStatus!=GameControl::PlayingHand)
+    {
+        return ;
+    }
+    // 判断玩家是不是用户玩家
+    if(m_gamectl->getCurrentPlayer()!=m_gamectl->getUserPlayer())
+    {
+        return ;
+    }
+    // 判断要出的牌是否为空
+    if(m_selectCards.isEmpty())
+    {
+        return ;
+    }
+    // 得到要打出的牌型
+    Cards cs;
+    for(auto it=m_selectCards.begin();it!=m_selectCards.end();++it)
+    {
+        Card card=(*it)->getCard();
+        cs.add(card);
+    }
+    PlayHand hand(cs);
+    PlayHand::HandType type=hand.getHandType();
+    if(type==PlayHand::Hand_Unknown)
+    {
+        return ;
+    }
+    // 判断当前玩家的牌能不能压住上家的牌
+    if(m_gamectl->getPendPlayer()!=m_gamectl->getUserPlayer())
+    {
+        Cards cards=m_gamectl->getPendCards();
+        if(!hand.canBeeat(PlayHand(cards)))
+        {
+            return ;
+        }
+    }
+    // 通过玩家对象出牌
+    m_gamectl->getUserPlayer()->playHand(cs);
+    // 清空容器
+    m_selectCards.clear();
+}
+
+void GamePanel::onUserPass()
+{
+    // 判断是不是用户玩家
+    Player* curPlayer=m_gamectl->getCurrentPlayer();
+    Player* userPlayer=m_gamectl->getUserPlayer();
+    if(curPlayer!=userPlayer)
+    {
+        return ;
+    }
+    // 判断当前用户玩家是不是上一轮出牌的玩家（可以不处理）
+    Player* pendPlayer=m_gamectl->getPendPlayer();
+    if(pendPlayer==userPlayer||pendPlayer==nullptr)
+    {
+        return ;
+    }
+    // 打出一个空的Cards对象
+    Cards empty;
+    userPlayer->playHand(empty);
+    // 清空用户选择的牌（玩家可能选择了一些牌，但是没有打出去）
+    for(auto it=m_selectCards.begin();it!=m_selectCards.end();++it)
+    {
+        // 设置为未显示状态
+        (*it)->setSeclected(false);
+    }
+    m_selectCards.clear();
+    // 更新玩家待出牌区域的牌
+    updatePlayerCards(userPlayer);
 }
 
 void GamePanel::showAnimation(AnimationType type, int bet)
@@ -735,7 +812,47 @@ void GamePanel::hidePlayerDropCards(Player *player)
                 m_cardMap[*last]->hide();
             }
         }
+        it->lastCards.clear();
     }
+}
+
+void GamePanel::showEndingScorePanel()
+{
+
+    bool islord=m_gamectl->getUserPlayer()->getRole()==Player::Load?true:false;
+    bool iswin=m_gamectl->getUserPlayer()->isWin();
+    EndingPanel* panel=new EndingPanel(islord,iswin,this);
+    panel->show();
+    panel->move((width()-panel->width())/2,-panel->height());
+    panel->setPlayerScore(m_gamectl->getLeftRobot()->getScore(),
+                          m_gamectl->getRightRobot()->getScore(),
+                          m_gamectl->getUserPlayer()->getScore());
+
+
+    QPropertyAnimation* animation=new QPropertyAnimation(panel,"geometry",this);
+    // 动画持续的时间
+    animation->setDuration(1500);
+    // 设置窗口的起始位置和终止位置
+    animation->setStartValue(QRect(panel->x(),panel->y(),panel->width(),panel->height()));
+    animation->setEndValue(QRect((width()-panel->width())/2,(height()-panel->height())/2,
+                                 panel->width(),panel->height()));
+    // 设置窗口的运动曲线
+    animation->setEasingCurve(QEasingCurve(QEasingCurve::OutBounce));
+    // 播放动画效果
+    animation->start();
+
+    // 处理窗口信号
+    connect(panel,&EndingPanel::continueGame,this,[=]()
+    {
+        panel->close();
+        panel->deleteLater();
+        animation->deleteLater();
+        // 把出牌按钮隐藏起来
+        ui->btnGroup->selectPanel(ButtonGroup::Empty);
+        // 继续发牌
+        gameStatusPrecess(GameControl::DispatchCard);
+    });
+
 }
 
 void GamePanel::paintEvent(QPaintEvent *ev)
