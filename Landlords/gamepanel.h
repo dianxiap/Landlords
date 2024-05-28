@@ -8,6 +8,7 @@
 #include "cardpanel.h"
 #include "gamecontrol.h"
 #include "animationwindow.h"
+#include "countdown.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class GamePanel; }
@@ -72,6 +73,8 @@ public:
     void hidePlayerDropCards(Player* player);
     // 显示玩家的最终得分
     void showEndingScorePanel();
+    // 初始化闹钟倒计时
+    void initCountDown();
 
 protected:
     void paintEvent(QPaintEvent* ev);
@@ -118,6 +121,7 @@ private:
     QSet<CardPanel*> m_selectCards;     // 保存当前被选中的牌的窗口对象（多张）
     QRect m_cardsRect;                  // 非机器人玩家剩余的扑克牌显示的区域
     QHash<CardPanel*,QRect> m_userCards;// 非机器人手中的牌 与 每张牌在窗口中的位置的映射
+    CountDown* m_countDown;             // 闹钟倒计时的对象
 };
 #endif // GAMEPANEL_H
 

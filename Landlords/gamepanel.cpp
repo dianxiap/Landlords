@@ -40,6 +40,9 @@ GamePanel::GamePanel(QWidget *parent)
     // 8.扑克牌场景的初始化
     initGameScene();
 
+    // 9.倒计时窗口初始化
+    initCountDown();
+
     // 定时器实例化
     m_timer=new QTimer(this);
     connect(m_timer,&QTimer::timeout,this,&GamePanel::onDispatchCard);
@@ -730,6 +733,7 @@ void GamePanel::onUserPlayHand()
             return ;
         }
     }
+    m_countDown->stopCOuntDown();
     // 通过玩家对象出牌
     m_gamectl->getUserPlayer()->playHand(cs);
     // 清空容器
@@ -738,6 +742,7 @@ void GamePanel::onUserPlayHand()
 
 void GamePanel::onUserPass()
 {
+    m_countDown->stopCOuntDown();
     // 判断是不是用户玩家
     Player* curPlayer=m_gamectl->getCurrentPlayer();
     Player* userPlayer=m_gamectl->getUserPlayer();
@@ -763,6 +768,7 @@ void GamePanel::onUserPass()
     m_selectCards.clear();
     // 更新玩家待出牌区域的牌
     updatePlayerCards(userPlayer);
+
 }
 
 void GamePanel::showAnimation(AnimationType type, int bet)
@@ -771,14 +777,25 @@ void GamePanel::showAnimation(AnimationType type, int bet)
     switch(type)
     {
     case AnimationType::LianDui:
-        break;
     case AnimationType::ShunZi:
+        m_animation->setFixedSize(250,150);
+        m_animation->move((width()-m_animation->width())/2,200);
+        m_animation->showSequence((AnimationWindow::Type)type);
         break;
     case AnimationType::Plane:
+        m_animation->setFixedSize(800,75);
+        m_animation->move((width()-m_animation->width())/2,200);
+        m_animation->showPlane();
         break;
     case AnimationType::Bomb:
+        m_animation->setFixedSize(180,200);
+        m_animation->move((width()-m_animation->width())/2,(height()-m_animation->height())/2-70);
+        m_animation->showBomb();
         break;
     case AnimationType::JokerBomb:
+        m_animation->setFixedSize(250,200);
+        m_animation->move((width()-m_animation->width())/2,(height()-m_animation->height())/2-70);
+        m_animation->showJokerBomb();
         break;
     case AnimationType::Bet:
         m_animation->setFixedSize(160,98);
@@ -853,6 +870,27 @@ void GamePanel::showEndingScorePanel()
         gameStatusPrecess(GameControl::DispatchCard);
     });
 
+}
+
+void GamePanel::initCountDown()
+{
+    m_countDown=new CountDown(this);
+    m_countDown->move((width()-m_countDown->width())/2,(height()-m_countDown->height())/2+30);
+    // 还剩5s
+    connect(m_countDown,&CountDown::notMuchTime,this,[=](){
+        // 播放提示音乐
+    });
+    // 时间到了
+    connect(m_countDown,&CountDown::timeout,this,&GamePanel::onUserPass);
+    UserPlayer* userPlayer=m_gamectl->getUserPlayer();
+    connect(userPlayer,&UserPlayer::startCountDown,this,[=](){
+        // 玩家开始出牌才开始倒计时
+        if(m_gamectl->getPendPlayer()!=userPlayer&&m_gamectl->getPendPlayer()!=nullptr)
+        {
+            // 显示倒计时对象
+            m_countDown->showCountDown();
+        }
+    });
 }
 
 void GamePanel::paintEvent(QPaintEvent *ev)

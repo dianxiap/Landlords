@@ -39,6 +39,6 @@ void ScorePanel::setMyFontColor(FontColor color)
     QString style=QString("QLabel{color:%1}").arg(MYCOLOR[color]);
     for(int i=0;i<m_list.size();++i)
     {
-        m_list[i]->setStyleSheet(style)
+        m_list[i]->setStyleSheet(style);
     }
 }
