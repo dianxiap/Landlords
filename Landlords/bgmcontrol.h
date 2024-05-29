@@ -106,6 +106,7 @@ public:
     void playerRobLorMusic(int point,RoleSex sex,bool isFirst);
     // 3.播放出牌的背景音乐
     void playCardMusic(Cards cards,bool isFirst,RoleSex sex);
+    void playLastMusic(CardType type,RoleSex sex);
     // 4.播放不出牌的背景音乐
     void playPassMusic(RoleSex sex);
     // 5.播放和停止辅助音乐

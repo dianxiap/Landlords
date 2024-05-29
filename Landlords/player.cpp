@@ -5,6 +5,7 @@ Player::Player(QObject *parent)
 {
     m_score=0;
     m_isWin=false;
+    m_pendPlayer==nullptr;
 }
 
 Player::Player(QString name, QObject *parent):Player(parent)

@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QRandomGenerator>
+#include <QTimer>
 
 BGMControl::BGMControl(QObject *parent)
     : QObject{parent}
@@ -194,6 +195,38 @@ void BGMControl::playCardMusic(Cards cards, bool isFirst, RoleSex sex)
     }
     // 播放音乐
     m_players[index]->play();
+    if(number==Bomb||number==JokerBomb)
+    {
+        playAssistMusic(BombVoice);
+    }
+    if(number==Plane)
+    {
+        playAssistMusic(PlaneVoice);
+    }
+
+}
+
+void BGMControl::playLastMusic(CardType type, RoleSex sex)
+{
+    // 1.当前玩家的性别
+    int index=sex==Man?0:1;
+    // 2.找到对应的播放列表
+    QMediaPlaylist* list=m_lists[index];
+
+    // 如果当前多媒体对象没有播放其他音乐，就直接播放指定音乐
+    if(m_players[index]->state()==QMediaPlayer::StoppedState)
+    {
+        list->setCurrentIndex(type);
+        m_players[index]->play();
+    }
+    else
+        // 如果当前多媒体对象正在播放其他音乐，就先等一等，再播放
+    {
+        QTimer::singleShot(1500,this,[=](){
+            list->setCurrentIndex(type);
+            m_players[index]->play();
+        });
+    }
 }
 
 void BGMControl::playPassMusic(RoleSex sex)

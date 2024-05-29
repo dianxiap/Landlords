@@ -10,24 +10,24 @@ Strategy::Strategy(Player *player, const Cards &cards)
 
 Cards Strategy::makeStrategy()
 {
-    // 得到出票玩家对象以及打出的牌
-    Player* pendPlayer=m_player->getPendPlayer();
-    Cards pendCards=m_player->getPendCards();
+    // 得到出牌玩家对象以及打出的牌
+    Player* pendPlayer = m_player->getPendPlayer();
+    Cards pendCards = m_player->getPendCards();
 
-    // 判读上次出牌的玩家是不是我自己
-    if(pendPlayer== m_player||pendPlayer==nullptr)
+    // 判断上次出牌的玩家是不是我自己
+    if(pendPlayer == m_player || pendPlayer == nullptr)
     {
         // 直接出牌
-        // 如果是我自己，出牌没有限制
+        // 如果是我自己, 出牌没有限制
         return firstPlay();
     }
     else
     {
-        // 如果不是我自己，需要找出比出牌玩家点数大的牌
+        // 如果不是我自己需要找比出牌玩家点数大的牌
         PlayHand type(pendCards);
-        Cards beatCards=getGreaterCards(type);
-        // 找到了点数大的牌，考虑是否打出
-        bool shouldBeat=whetherToBeat(beatCards);
+        Cards beatCards = getGreaterCards(type);
+        // 找到了点数大的牌需要考虑是否出牌
+        bool shouldBeat = whetherToBeat(beatCards);
         if(shouldBeat)
         {
             return beatCards;
@@ -243,7 +243,7 @@ Cards Strategy::getGreaterCards(PlayHand type)
 {
     // 1.出牌玩家和当前玩家是不是一伙的
     Player* pendPlayer=m_player->getPendPlayer();
-    if(pendPlayer->getRole()!=m_player->getRole()&&pendPlayer->getCards().cardCount()<=3)
+    if(pendPlayer!=nullptr&&pendPlayer->getRole()!=m_player->getRole()&&pendPlayer->getCards().cardCount()<=3)
     {
         // 出牌玩家手里的牌小于3张，那么当前玩家应出牌压过出牌玩家
         // 找到所有的炸弹

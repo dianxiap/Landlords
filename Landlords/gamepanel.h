@@ -9,7 +9,7 @@
 #include "gamecontrol.h"
 #include "animationwindow.h"
 #include "countdown.h"
-
+#include "bgmcontrol.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class GamePanel; }
 QT_END_NAMESPACE
@@ -122,6 +122,7 @@ private:
     QRect m_cardsRect;                  // 非机器人玩家剩余的扑克牌显示的区域
     QHash<CardPanel*,QRect> m_userCards;// 非机器人手中的牌 与 每张牌在窗口中的位置的映射
     CountDown* m_countDown;             // 闹钟倒计时的对象
+    BGMControl* m_bgm;                  // 游戏音效类的实例对象
 };
 #endif // GAMEPANEL_H
 

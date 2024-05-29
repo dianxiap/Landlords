@@ -20,6 +20,7 @@ SOURCES += \
     countdown.cpp \
     endingpanel.cpp \
     gamecontrol.cpp \
+    loading.cpp \
     main.cpp \
     gamepanel.cpp \
     mybutton.cpp \
@@ -43,6 +44,7 @@ HEADERS += \
     endingpanel.h \
     gamecontrol.h \
     gamepanel.h \
+    loading.h \
     mybutton.h \
     player.h \
     playhand.h \

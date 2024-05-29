@@ -12,12 +12,18 @@ Robot::Robot(QObject *parent)
 void Robot::prepareCallLord()
 {
     RobotGrapLord* subThread=new RobotGrapLord(this);
+    connect(subThread,&RobotGrapLord::finished,this,[=](){
+        subThread->deleteLater();
+    });
     subThread->start(); //启动子线程
 }
 
 void Robot::preparePlayHand()
 {
     RobotPlayHand* subThread=new RobotPlayHand(this);
+    connect(subThread,&RobotPlayHand::finished,this,[=](){
+        subThread->deleteLater();
+    });
     subThread->start();
 }
 
@@ -76,5 +82,4 @@ void Robot::thinkPlayHand()
     Strategy st(this,m_cards);
     Cards cs=st.makeStrategy();
     playHand(cs);
-
 }
