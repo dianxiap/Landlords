@@ -1,43 +1,41 @@
-#include "loading.h"
-
 #include "gamepanel.h"
+#include "loading.h"
 
 #include <QPainter>
 #include <QTimer>
 
-Loading::Loading(QWidget *parent)
-    : QWidget{parent}
+Loading::Loading(QWidget *parent) : QWidget(parent)
 {
     m_bk.load(":/images/loading.png");
     setFixedSize(m_bk.size());
 
-    // 去掉进度条的边框
+    // 去边框
     setWindowFlags(Qt::FramelessWindowHint | windowFlags());
     // 背景透明
     setAttribute(Qt::WA_TranslucentBackground);
 
     QPixmap pixmap(":/images/progress.png");
-    QTimer* timer=new QTimer(this);
-    connect(timer,&QTimer::timeout,this,[=](){
-        m_progess=pixmap.copy(0,0,m_dist,pixmap.height());
+    QTimer* timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [=](){
+        m_progress = pixmap.copy(0, 0, m_dist, pixmap.height());
         update();
-        if(m_dist>=pixmap.width())
+        if(m_dist >= pixmap.width())
         {
             timer->stop();
             timer->deleteLater();
-            GamePanel* panel=new GamePanel;
+            GamePanel* panel = new GamePanel;
             panel->show();
             close();
         }
-        m_dist+=5;
+        m_dist += 5;
     });
-    timer->start();
+    timer->start(15);
 }
 
 void Loading::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
     QPainter p(this);
-    p.drawPixmap(rect(),m_bk);
-    p.drawPixmap(62,417,m_progess.width(),m_progess.height(),m_progess);
+    p.drawPixmap(rect(), m_bk);
+    p.drawPixmap(62, 417, m_progress.width(), m_progress.height(), m_progress);
 }

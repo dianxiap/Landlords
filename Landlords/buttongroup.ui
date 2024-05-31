@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>506</width>
-    <height>45</height>
+    <width>570</width>
+    <height>50</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_4">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -32,7 +32,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="startPage">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -43,7 +43,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>195</width>
+           <width>218</width>
            <height>20</height>
           </size>
          </property>
@@ -63,7 +63,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>195</width>
+           <width>217</width>
            <height>20</height>
           </size>
          </property>
@@ -72,7 +72,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="playCardPage">
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <spacer name="horizontalSpacer_3">
          <property name="orientation">
@@ -80,7 +80,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>195</width>
+           <width>218</width>
            <height>20</height>
           </size>
          </property>
@@ -100,7 +100,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>195</width>
+           <width>217</width>
            <height>20</height>
           </size>
          </property>
@@ -109,7 +109,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="PassOrPlayPage">
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <spacer name="horizontalSpacer_5">
          <property name="orientation">
@@ -117,7 +117,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>128</width>
+           <width>143</width>
            <height>20</height>
           </size>
          </property>
@@ -160,7 +160,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>127</width>
+           <width>142</width>
            <height>20</height>
           </size>
          </property>
@@ -171,13 +171,13 @@
      <widget class="QWidget" name="callLordPage">
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <spacer name="horizontalSpacer_9">
+        <spacer name="horizontalSpacer_8">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>40</width>
+           <width>0</width>
            <height>20</height>
           </size>
          </property>
@@ -260,13 +260,13 @@
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer_8">
+        <spacer name="horizontalSpacer_9">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>2</width>
+           <width>0</width>
            <height>20</height>
           </size>
          </property>
@@ -274,7 +274,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="nullpage"/>
+     <widget class="QWidget" name="nullPage"/>
     </widget>
    </item>
   </layout>

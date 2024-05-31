@@ -9,9 +9,9 @@ class MyButton : public QPushButton
 public:
     explicit MyButton(QWidget *parent = nullptr);
 
-    void setImage(QString normal,QString hover,QString pressed);
+    void setImage(QString normal, QString hover, QString pressed);
 
-
+signals:
 
 protected:
     // 鼠标按下
@@ -21,17 +21,16 @@ protected:
     // 鼠标进入
     void enterEvent(QEvent* ev);
     // 鼠标离开
-    void leaveEvent(QEvent *event);
+    void leaveEvent(QEvent* ev);
     // 绘图
     void paintEvent(QPaintEvent* ev);
-
-signals:
 
 private:
     QString m_normal;
     QString m_hover;
     QString m_pressed;
     QPixmap m_pixmap;
+
 };
 
 #endif // MYBUTTON_H

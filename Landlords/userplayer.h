@@ -1,8 +1,8 @@
 #ifndef USERPLAYER_H
 #define USERPLAYER_H
 
-#include <QObject>
 #include "player.h"
+#include <QObject>
 
 class UserPlayer : public Player
 {
@@ -13,6 +13,7 @@ public:
 
     void prepareCallLord() override;
     void preparePlayHand() override;
+
 signals:
     void startCountDown();
 };

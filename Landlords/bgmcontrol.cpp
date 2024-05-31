@@ -1,5 +1,4 @@
 #include "bgmcontrol.h"
-
 #include "playhand.h"
 
 #include <QFile>
@@ -9,26 +8,22 @@
 #include <QRandomGenerator>
 #include <QTimer>
 
-BGMControl::BGMControl(QObject *parent)
-    : QObject{parent}
+BGMControl::BGMControl(QObject *parent) : QObject(parent)
 {
-    for(int i=0;i<5;i++)
+    for(int i=0; i<5; ++i)
     {
-        QMediaPlayer* player=new QMediaPlayer(this);
-        QMediaPlaylist* list=new QMediaPlaylist(this);
-        if(i<2||i==4)
+        QMediaPlayer* player = new QMediaPlayer(this);
+        QMediaPlaylist* list = new QMediaPlaylist(this);
+        if(i<2 || i == 4)
         {
-            // 单曲只播放一次
             list->setPlaybackMode(QMediaPlaylist::CurrentItemOnce);
         }
-        else if(i==2)
+        else if(i == 2)
         {
-            // 循环播放
             list->setPlaybackMode(QMediaPlaylist::Loop);
         }
-        // 每个多媒体播放类都对应一个播放列表
-        player->setPlaylist(list);     // 设置播放列表
-        player->setVolume(100);        // 设置播放声音
+        player->setPlaylist(list);
+        player->setVolume(100);
         m_players.push_back(player);
         m_lists.push_back(list);
     }
@@ -38,27 +33,27 @@ BGMControl::BGMControl(QObject *parent)
 void BGMControl::initPlayList()
 {
     QStringList list;
-    list<<"Man"<<"Woman"<<"BGM"<<"Other"<<"Ending";
+    list << "Man" << "Woman" << "BGM" << "Other" << "Ending";
 
-    // 都json配置文件
+    // 读json配置文件
     QFile file(":/conf/playList.json");
     file.open(QFile::ReadOnly);
-    QByteArray json=file.readAll();
+    QByteArray json = file.readAll();
     file.close();
-    // 解析从json中读出来的数据
-    QJsonDocument doc=QJsonDocument::fromJson(json);
-    QJsonObject obj=doc.object();
-    // 初始化多媒体播放列表
-    for(int i=0;i<list.size();++i)
+    // 解析从文件中读出的json数据
+    QJsonDocument doc = QJsonDocument::fromJson(json);
+    QJsonObject obj = doc.object();
+
+    for(int i=0; i<list.size(); ++i)
     {
-        QString prefix=list.at(i);
-        QJsonArray array=obj.value(prefix).toArray();
-        for(int j=0;j<array.size();++j)
+        QString prefix = list.at(i);
+        QJsonArray array = obj.value(prefix).toArray();
+        // 初始化多媒体播放列表
+        for(int j=0; j<array.size(); ++j)
         {
             m_lists[i]->addMedia(QMediaContent(QUrl(array.at(j).toString())));
         }
     }
-
 }
 
 void BGMControl::startBGM(int volume)
@@ -73,20 +68,17 @@ void BGMControl::stopBGM()
     m_players[2]->stop();
 }
 
-// 玩家下注了没有
-// 玩家性别
-// 什么时候播放什么音乐？
-void BGMControl::playerRobLorMusic(int point, RoleSex sex, bool isFirst)
+// 玩家下注了没有?
+// 玩家的性别?
+// 什么时候播放什么样的音频文件
+void BGMControl::playerRobLordMusic(int point, RoleSex sex, bool isFirst)
 {
-    // 记录男女在播放列表的位置
-    int index=sex==Man?0:1;
-
-    if(isFirst&&point>0)
+    int index = sex == Man ? 0 : 1;
+    if(isFirst && point > 0)
     {
         m_lists[index]->setCurrentIndex(Order);
     }
-    // 玩家放弃抢地主
-    else if(point==0)
+    else if(point == 0)
     {
         if(isFirst)
         {
@@ -97,11 +89,11 @@ void BGMControl::playerRobLorMusic(int point, RoleSex sex, bool isFirst)
             m_lists[index]->setCurrentIndex(NoRob);
         }
     }
-    else if(point==2)
+    else if(point == 2)
     {
         m_lists[index]->setCurrentIndex(Rob1);
     }
-    else if(point==3)
+    else if(point == 3)
     {
         m_lists[index]->setCurrentIndex(Rob2);
     }
@@ -110,84 +102,82 @@ void BGMControl::playerRobLorMusic(int point, RoleSex sex, bool isFirst)
 
 void BGMControl::playCardMusic(Cards cards, bool isFirst, RoleSex sex)
 {
-    // 得到对应的播放列表
-    int index=sex==Man?0:1;
-    QMediaPlaylist* list=m_lists[index];
+    // 得到播放列表
+    int index = sex == Man ? 0 : 1;
+    QMediaPlaylist* list = m_lists[index];
 
-    Card::CardPoint pt=Card::CardPoint::Card_Begin;
-    // 取出牌型，然后进行判断
+    Card::CardPoint pt = Card::CardPoint::Card_Begin;
+    // 取出牌型 然后进行判断
     PlayHand hand(cards);
-    PlayHand::HandType type=hand.getHandType();
-    if(type==PlayHand::Hand_Single||type==PlayHand::Hand_Pair||type==PlayHand::Hand_Triple)
+    PlayHand::HandType type = hand.getHandType();
+    if(type == PlayHand::Hand_Single || type == PlayHand::Hand_Pair || type == PlayHand::Hand_Triple)
     {
-        pt=cards.takeRandomCard().point();
+        pt = cards.takeRandomCard().point();
     }
-
-    // 根据牌型播放音乐
-    int number=0;
+    int number = 0;
     switch(type)
     {
-    // 单排
+    // 单牌
     case PlayHand::Hand_Single:
-        number=pt-1;
+        number = pt - 1;
         break;
     // 对牌
     case PlayHand::Hand_Pair:
-        number=pt-1+15;
+        number = pt - 1 + 15;
         break;
-    // 三张点数形同的牌
+    // 三张点数相同的牌
     case PlayHand::Hand_Triple:
-        number=pt-1+15+13;
+        number = pt - 1 + 15 + 13;
         break;
     // 三带一
     case PlayHand::Hand_Triple_Single:
-        number=ThreeBindOne;
+        number = ThreeBindOne;
         break;
     // 三带二
     case PlayHand::Hand_Triple_Pair:
-        number=ThreeBindPair;
+        number = ThreeBindPair;
         break;
     // 飞机
     case PlayHand::Hand_Plane:
-    // 飞机带两个但
+    // 飞机带两个单
     case PlayHand::Hand_Plane_Two_Single:
-    // 飞机带两个对
+    // 飞机带两个对儿
     case PlayHand::Hand_Plane_Two_Pair:
-        number=Plane;
+        number = Plane;
         break;
     // 连对
     case PlayHand::Hand_Seq_Pair:
-        number=SequencePair;
+        number = SequencePair;
         break;
     // 顺子
     case PlayHand::Hand_Seq_Single:
-        number=Sequence;
+        number = Sequence;
         break;
     // 炸弹
     case PlayHand::Hand_Bomb:
-        number=Bomb;
+        number = Bomb;
         break;
     // 王炸
     case PlayHand::Hand_Bomb_Jokers:
-        number=JokerBomb;
+        number = JokerBomb;
         break;
-    // 炸弹带一队
+    // 炸弹带一对儿
     case PlayHand::Hand_Bomb_Pair:
-    // 炸弹带两张单排
+    // 炸弹带两单
     case PlayHand::Hand_Bomb_Two_Single:
-    // 王炸带一对
+    // 王炸带一对儿
     case PlayHand::Hand_Bomb_Jokers_Pair:
-    // 王炸带两张单排
+    // 王炸带两单
     case PlayHand::Hand_Bomb_Jokers_Two_Single:
-        number=FourBindTwo;
-        break;
+        number = FourBindTwo;
+
     default:
         break;
     }
 
-    if(!isFirst&&(number>=Plane&& number<=FourBindTwo))
+    if(!isFirst && (number >= Plane && number <= FourBindTwo))
     {
-        list->setCurrentIndex(MoreBiger1+QRandomGenerator::global()->bounded(2));
+        list->setCurrentIndex(MoreBiger1 + QRandomGenerator::global()->bounded(2));
     }
     else
     {
@@ -195,34 +185,30 @@ void BGMControl::playCardMusic(Cards cards, bool isFirst, RoleSex sex)
     }
     // 播放音乐
     m_players[index]->play();
-    if(number==Bomb||number==JokerBomb)
+    if(number == Bomb || number == JokerBomb)
     {
         playAssistMusic(BombVoice);
     }
-    if(number==Plane)
+    if(number == Plane)
     {
         playAssistMusic(PlaneVoice);
     }
-
 }
 
 void BGMControl::playLastMusic(CardType type, RoleSex sex)
 {
-    // 1.当前玩家的性别
-    int index=sex==Man?0:1;
-    // 2.找到对应的播放列表
-    QMediaPlaylist* list=m_lists[index];
-
-    // 如果当前多媒体对象没有播放其他音乐，就直接播放指定音乐
-    if(m_players[index]->state()==QMediaPlayer::StoppedState)
+    // 1. 玩家的性别
+    int index = sex == Man ? 0 : 1;
+    // 2. 找到播放列表
+    QMediaPlaylist* list = m_lists[index];
+    if(m_players[index]->state() == QMediaPlayer::StoppedState)
     {
         list->setCurrentIndex(type);
         m_players[index]->play();
     }
     else
-        // 如果当前多媒体对象正在播放其他音乐，就先等一等，再播放
     {
-        QTimer::singleShot(1500,this,[=](){
+        QTimer::singleShot(1500, this, [=](){
             list->setCurrentIndex(type);
             m_players[index]->play();
         });
@@ -231,37 +217,36 @@ void BGMControl::playLastMusic(CardType type, RoleSex sex)
 
 void BGMControl::playPassMusic(RoleSex sex)
 {
-    // 1.当前玩家的性别
-    int index=sex==Man?0:1;
-    // 2.找到对应的播放列表
-    QMediaPlaylist* list=m_lists[index];
-    // 3.找到要播放的音乐
-    int random=QRandomGenerator::global()->bounded(4);
-    list->setCurrentIndex(Pass1+random);
-    // 4.播放音乐
+    // 1. 玩家的性别
+    int index = sex == Man ? 0 : 1;
+    // 2. 找到播放列表
+    QMediaPlaylist* list = m_lists[index];
+    // 3. 找到要播放的音乐
+    int random = QRandomGenerator::global()->bounded(4);
+    list->setCurrentIndex(Pass1 + random);
+    // 4. 播放音乐
     m_players[index]->play();
 }
 
 void BGMControl::playAssistMusic(AssistMusic type)
 {
     QMediaPlaylist::PlaybackMode mode;
-    // 1.判断当前播放的音乐是不是发牌
-    if(type==Dispatch)
+    if(type == Dispatch)
     {
         // 循环播放
-        mode=QMediaPlaylist::CurrentItemInLoop;
+        mode = QMediaPlaylist::CurrentItemInLoop;
     }
     else
     {
         // 单曲播放一次
-        mode=QMediaPlaylist::CurrentItemOnce;
+        mode = QMediaPlaylist::CurrentItemOnce;
     }
-    // 2.找到对应的播放列表
-    QMediaPlaylist* list=m_lists[3];
-    // 3.找到要播放的音乐
+    // 2. 找到播放列表
+    QMediaPlaylist* list = m_lists[3];
+    // 3. 找到要播放的音乐
     list->setCurrentIndex(type);
     list->setPlaybackMode(mode);
-    // 4.播放音乐
+    // 4. 播放音乐
     m_players[3]->play();
 }
 

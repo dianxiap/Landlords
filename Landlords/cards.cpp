@@ -1,6 +1,6 @@
+#include "cards.h"
 #include <QRandomGenerator>
 #include <QDebug>
-#include "cards.h"
 
 Cards::Cards()
 {
@@ -66,6 +66,11 @@ int Cards::cardCount()
 }
 
 bool Cards::isEmpty()
+{
+    return m_cards.isEmpty();
+}
+
+bool Cards::isEmpty() const
 {
     return m_cards.isEmpty();
 }

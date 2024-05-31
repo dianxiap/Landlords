@@ -11,7 +11,7 @@ class BGMControl : public QObject
 {
     Q_OBJECT
 public:
-    enum RoleSex{Man,Woman};
+    enum RoleSex{Man, Woman};
     enum CardType
     {
         // 单张牌
@@ -99,26 +99,25 @@ public:
     // 初始化播放列表
     void initPlayList();
 
-    // 1.背景音乐（播放和停止）
+    // 1. 背景音乐(播放和停止播放)
     void startBGM(int volume);
     void stopBGM();
-    // 2.播放玩家抢地主音乐
-    void playerRobLorMusic(int point,RoleSex sex,bool isFirst);
-    // 3.播放出牌的背景音乐
-    void playCardMusic(Cards cards,bool isFirst,RoleSex sex);
-    void playLastMusic(CardType type,RoleSex sex);
-    // 4.播放不出牌的背景音乐
+    // 2. 播放玩家抢地主音乐
+    void playerRobLordMusic(int point, RoleSex sex, bool isFirst);
+    // 3. 播放出牌的背景音乐
+    void playCardMusic(Cards cards, bool isFirst, RoleSex sex);
+    void playLastMusic(CardType type, RoleSex sex);
+    // 4. 播放不出牌的背景音乐
     void playPassMusic(RoleSex sex);
-    // 5.播放和停止辅助音乐
+    // 5. 播放辅助音乐
     void playAssistMusic(AssistMusic type);
     void stopAssistMusic();
-    // 6.播放结束音乐
+    // 6. 播放结尾音乐
     void playEndingMusic(bool isWin);
 
 signals:
-
 private:
-    // 0.男声 1.女声 2.bgm 3.辅助音乐 4.结束音乐
+    // 0.man 1.woman 2.bgm 3.辅助音乐 4.结束音乐
     QVector<QMediaPlayer*> m_players;
     QVector<QMediaPlaylist*> m_lists;
 };

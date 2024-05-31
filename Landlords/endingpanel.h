@@ -11,20 +11,22 @@ class EndingPanel : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EndingPanel(bool isLord,bool iswin,QWidget *parent = nullptr);
+    explicit EndingPanel(bool isLord, bool isWin, QWidget *parent = nullptr);
 
-    void setPlayerScore(int left,int right,int me);
+    void setPlayerScore(int left, int right, int me);
 
 signals:
     void continueGame();
+
 protected:
     void paintEvent(QPaintEvent* ev);
 
 private:
     QPixmap m_bk;
     QLabel* m_title;
-    ScorePanel* m_score;
+    ScorePanel *m_score;
     QPushButton* m_continue;
+
 };
 
 #endif // ENDINGPANEL_H

@@ -2,11 +2,10 @@
 #define GAMECONTROL_H
 
 #include <QObject>
-#include "userplayer.h"
 #include "robot.h"
-// #include "card.h"
+#include "userplayer.h"
+#include "cards.h"
 
-// 记录玩家下注的相关信息
 struct BetRecord
 {
     BetRecord()
@@ -15,16 +14,13 @@ struct BetRecord
     }
     void reset()
     {
-        player=nullptr;
-        bet=0;
-        times=0;
+        player = nullptr;
+        bet = 0;
+        times = 0;
     }
-    // 下注的玩家对象
     Player* player;
-    // 玩家下注的分数
     int bet;
-    // 第几次叫地主
-    int times;
+    int times;  // 第几次叫地主
 };
 
 class GameControl : public QObject
@@ -48,14 +44,14 @@ public:
 
     explicit GameControl(QObject *parent = nullptr);
 
-    // 玩家
-    // 初始化 和 得到玩家的实例对象
+    // 初始化玩家
     void playerInit();
+
+    // 得到玩家的实例对象
     Robot* getLeftRobot();
     Robot* getRightRobot();
     UserPlayer* getUserPlayer();
 
-    // 设置 和 获取当前玩家
     void setCurrentPlayer(Player* player);
     Player* getCurrentPlayer();
 
@@ -63,56 +59,52 @@ public:
     Player* getPendPlayer();
     Cards getPendCards();
 
-    // 扑克牌
-    // 初始化一封扑克牌的数据
+    // 初始化扑克牌
     void initAllCards();
-
     // 每次发一张牌
     Card takeOneCard();
-
-    // 得到最后的三张牌
+    // 得到最后的三张底牌
     Cards getSurplusCards();
-
     // 重置卡牌数据
     void resetCardData();
 
     // 准备叫地主
     void startLordCard();
     // 成为地主
-    void becomeLord(Player* player,int bet);
+    void becomeLord(Player *player, int bet);
     // 清空所有玩家的得分
     void clearPlayerScore();
     // 得到玩家下注的最高分数
     int getPlayerMaxBet();
 
     // 处理叫地主
-    void onGrabBet(Player*player, int bet);
+    void onGrabBet(Player* player, int bet);
 
     // 处理出牌
-    void onPlayHand(Player* player,Cards& cards);
+    void onPlayHand(Player *player, const Cards &card);
 
 signals:
-    // 通知主窗口玩家状态发生变化
-    void playerStatusChanged(Player* player,PlayerStatus status);
-    // 通知主界面玩家抢地主了
-    void notifyGrabLordBet(Player* player,int bet,bool flag);
+    void playerStatusChanged(Player* player, PlayerStatus status);
+    // 通知玩家抢地主了
+    void notifyGrabLordBet(Player* player, int bet, bool flag);
     // 游戏状态变化
     void gameStatusChanged(GameStatus status);
-    // 通知主界面玩家抢地主了
-    void notifyPlayHand(Player* player,Cards& cards);
-    // 给其他玩家传递出牌数据
-    void pendingInof(Player* player,Cards& cards);
+    // 通知玩家出牌了
+    void notifyPlayHand(Player* player, const Cards& card);
+    // 给玩家传递出牌数据
+    void pendingInfo(Player* player, const Cards& card);
 
 private:
-    Robot* m_robotLeft;   // 机器人玩家
-    Robot* m_robotRight;
-    UserPlayer* m_user;   // 用户玩家
-    Player* m_currPlayer; // 指向当前玩家
-    Player* m_pendPlayer;  // 出牌的玩家
-    Cards m_pendCards;     // 出牌的玩家打出的牌
+    Robot* m_robotLeft = nullptr;
+    Robot* m_robotRight = nullptr;
+    UserPlayer* m_user = nullptr;
+    Player* m_currPlayer = nullptr;
+    Player* m_pendPlayer = nullptr;
+    Cards m_pendCards;
     Cards m_allCards;
     BetRecord m_betRecord;
-    int m_currBet;
+    int m_curBet = 0;
+
 };
 
 #endif // GAMECONTROL_H

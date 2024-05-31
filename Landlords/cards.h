@@ -1,8 +1,8 @@
 #ifndef CARDS_H
 #define CARDS_H
+#include "card.h"
 
 #include <QSet>
-#include "card.h"
 
 class Cards
 {
@@ -30,6 +30,7 @@ public:
     int cardCount();
     // 是否为空
     bool isEmpty();
+    bool isEmpty() const;
     void clear();
 
     // 最大点数
@@ -57,4 +58,3 @@ private:
 };
 
 #endif // CARDS_H
-

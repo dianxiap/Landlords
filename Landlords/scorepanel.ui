@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>161</width>
-    <height>96</height>
+    <width>224</width>
+    <height>117</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,6 +20,7 @@
       <font>
        <family>微软雅黑</family>
        <pointsize>12</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -40,6 +41,7 @@
       <font>
        <family>微软雅黑</family>
        <pointsize>12</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -60,6 +62,7 @@
       <font>
        <family>微软雅黑</family>
        <pointsize>12</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -80,6 +83,7 @@
       <font>
        <family>微软雅黑</family>
        <pointsize>12</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -100,6 +104,7 @@
       <font>
        <family>微软雅黑</family>
        <pointsize>12</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -120,6 +125,7 @@
       <font>
        <family>微软雅黑</family>
        <pointsize>12</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -140,6 +146,7 @@
       <font>
        <family>微软雅黑</family>
        <pointsize>12</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -160,6 +167,7 @@
       <font>
        <family>微软雅黑</family>
        <pointsize>12</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -180,6 +188,7 @@
       <font>
        <family>微软雅黑</family>
        <pointsize>12</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>

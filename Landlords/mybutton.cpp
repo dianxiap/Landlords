@@ -1,26 +1,25 @@
+#include "mybutton.h"
+
 #include <QMouseEvent>
 #include <QPainter>
 
-#include "mybutton.h"
+MyButton::MyButton(QWidget *parent) : QPushButton(parent)
+{
 
-MyButton::MyButton(QWidget *parent)
-    : QPushButton{parent}
-{}
+}
 
 void MyButton::setImage(QString normal, QString hover, QString pressed)
 {
-    m_normal=normal;
-    m_hover=hover;
-    m_pressed=pressed;
+    m_normal = normal;
+    m_hover = hover;
+    m_pressed = pressed;
     m_pixmap.load(m_normal);
-
-    // 强制刷新绘图界面
     update();
 }
 
 void MyButton::mousePressEvent(QMouseEvent *ev)
 {
-    if(ev->button()==Qt::LeftButton)
+    if(ev->button() == Qt::LeftButton)
     {
         m_pixmap.load(m_pressed);
         update();
@@ -30,7 +29,7 @@ void MyButton::mousePressEvent(QMouseEvent *ev)
 
 void MyButton::mouseReleaseEvent(QMouseEvent *ev)
 {
-    if(ev->button()==Qt::LeftButton)
+    if(ev->button() == Qt::LeftButton)
     {
         m_pixmap.load(m_normal);
         update();
@@ -40,18 +39,21 @@ void MyButton::mouseReleaseEvent(QMouseEvent *ev)
 
 void MyButton::enterEvent(QEvent *ev)
 {
+    Q_UNUSED(ev)
     m_pixmap.load(m_hover);
     update();
 }
 
-void MyButton::leaveEvent(QEvent *event)
+void MyButton::leaveEvent(QEvent *ev)
 {
+    Q_UNUSED(ev)
     m_pixmap.load(m_normal);
     update();
 }
 
 void MyButton::paintEvent(QPaintEvent *ev)
 {
+    Q_UNUSED(ev)
     QPainter p(this);
-    p.drawPixmap(rect(),m_pixmap);
+    p.drawPixmap(rect(), m_pixmap);
 }

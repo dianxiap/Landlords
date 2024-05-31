@@ -66,4 +66,3 @@ uint qHash(const Card& card);
 using CardList = QVector<Card>;
 
 #endif // CARD_H
-

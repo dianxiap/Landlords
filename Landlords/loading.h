@@ -15,9 +15,8 @@ protected:
 
 private:
     QPixmap m_bk;
-    QPixmap m_progess;
-    int m_dist=1;   // 当前进度条的宽度
-
+    QPixmap m_progress;
+    int m_dist = 15;
 };
 
 #endif // LOADING_H
